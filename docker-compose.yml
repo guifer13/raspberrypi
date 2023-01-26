@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+
+  api-mqtt-mariadb:
+    container_name: api-mqtt-mariadb
+    build: ./node_mqtt/ #Dockerfile
+
+  grafana:
+      container_name: grafana
+      image: grafana/grafana
+      user: "1001"
+      environment: 
+        - GF_INSTALL_PLUGINS=alexanderzobnin-zabbix-app
+      volumes:
+        - /home/ubuntu/grafana/data:/var/lib/grafana
+      restart: always
+      ports:
+        - 3000:3000
+      networks:
+        - REDE_1
+
+  db:
+    container_name: mysql
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    networks:
+      - REDE_1
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      PMA_HOST: mysql
+    networks:
+      - REDE_1
+
+volumes:
+  config:
+  data:
+  log:
+
+networks:
+  REDE_1:
+    external: false
+
